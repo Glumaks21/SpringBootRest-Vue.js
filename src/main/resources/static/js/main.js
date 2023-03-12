@@ -27,7 +27,7 @@ const app = createApp({
         },
         async saveMessage(message) {
             if (message.id !== null) {
-                const response = await axios.put('/messages/' + message.id, message)
+                const saved = await axios.put('/messages/' + message.id, message)
                     .then(response => response.data)
                     .catch(err => console.log(err));
 
