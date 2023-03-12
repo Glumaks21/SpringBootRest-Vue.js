@@ -7,6 +7,10 @@ export default {
         }
     },
     template: `
-        <div><i>({{ message.id }})</i>{{ message.text }}</div>
+        <div>
+            <i>({{ message.id }})</i>{{ message.text }}
+            <button @click="$emit('edit', message)">edit</button>
+            <button @click="$emit('delete', message)">delete</button>
+        </div>
     `
 }
