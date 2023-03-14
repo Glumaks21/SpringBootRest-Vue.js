@@ -23,17 +23,23 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/", "/index.html", "/css/**", "/js/**", "/authorized/**").permitAll()
+                        .requestMatchers("/", "/js/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf().disable()
+                .exceptionHandling(e -> e
+                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                )
                 .oauth2Login(Customizer.withDefaults())
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/").permitAll()
+                )
                 .build();
     }
 
     @Bean
     public PrincipalExtractor principalExtractor(UserDetailsRepo userDetailsRepo) {
-        return map -> {
+            return map -> {
             String id = (String) map.get("sub");
 
             User user = userDetailsRepo.findById(id).orElseGet(() -> {

@@ -8,16 +8,21 @@ const app = createApp({
     data() {
         return {
             selectedMessage: null,
-            messages: []
+            messages: frontendData.messages,
+            profile: frontendData.profile
         }
     },
     template: `
         <h2>My app list</h2>
-        <message-form :selectedMessage="selectedMessage" @save="saveMessage"/>
-        <message-list :messages="messages" @edit="editMessage" @delete="deleteMessage"/>
-    `,
+        <div v-if="!profile">Need authorize via <a href="/oauth2/authorization/google">GitHub</a></div>
+        <div v-else>
+            <a href="/logout">Log out</a>
+            <message-form :selectedMessage="selectedMessage" @save="saveMessage"/>
+            <message-list :messages="messages" @edit="editMessage" @delete="deleteMessage"/>
+        </div>    
+`,
     created() {
-        this.fetchMessages();
+        //this.fetchMessages();
     },
     methods: {
         fetchMessages() {

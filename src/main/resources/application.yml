@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/sarafan
     username: root
-    password: root
+    password: ${dbPassword}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     generate-ddl: true
@@ -10,10 +10,14 @@ spring:
     oauth2:
       client:
         registration:
-          github:
-            client-id: Iv1.dca7cb868e14fad6
-            client-secret: 4eb3cd5759cd81489a54c31d4ec4e6081b4d7b6d
-            redirect-uri: http://localhost:8080
+          google:
+            client-id: 449882322828-shjbe5eo9sd9k8fj38c94fqlag0iihqn.apps.googleusercontent.com
+            client-secret: ${clientSecret}
+  session:
+    jdbc:
+      initialize-schema: always
+      table-name: SPRING_SESSION
+      schema: classpath:session_mysql_schema.sql
 logging:
   level:
     org.springframework.security: DEBUG
