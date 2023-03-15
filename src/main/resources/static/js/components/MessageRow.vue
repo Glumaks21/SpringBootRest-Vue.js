@@ -1,5 +1,5 @@
 <template>
-  <div class="row">
+  <div>
       <i>({{ message.id }})</i>{{ message.text }}
       <button @click="$emit('edit', message)">edit</button>
       <button @click="$emit('delete', message)">delete</button>

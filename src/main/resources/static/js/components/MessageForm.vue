@@ -8,6 +8,8 @@
 </template>
 
 <script>
+import {sendMessage} from "../util/ws";
+
 export default {
   name: "message-form",
   props: {
@@ -34,6 +36,7 @@ export default {
   },
   methods: {
     save() {
+      sendMessage(this.message)
       this.$emit('save', this.message);
       this.message.id = null;
       this.message.text = '';
