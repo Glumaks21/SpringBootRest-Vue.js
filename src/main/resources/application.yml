@@ -18,6 +18,8 @@ spring:
       initialize-schema: always
       table-name: SPRING_SESSION
       schema: classpath:session_mysql_schema.sql
+server:
+  port: 9000
 logging:
   level:
     org.springframework.security: DEBUG
