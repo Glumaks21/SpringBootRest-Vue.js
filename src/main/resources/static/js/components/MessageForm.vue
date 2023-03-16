@@ -14,7 +14,8 @@
 </template>
 
 <script>
-import {sendMessage} from "../util/ws";
+
+import messagesApi from "../api/messages";
 
 export default {
   name: "message-form",
@@ -42,8 +43,16 @@ export default {
   },
   methods: {
     save() {
-      sendMessage(this.message)
-      this.$emit('save', this.message);
+      if (this.message.id === null) {
+        messagesApi.add(this.message)
+            .then(saved => this.$emit('add', saved.data))
+            .catch(err => console.log(err))
+      } else {
+        messagesApi.update(this.message)
+            .then(updated => this.$emit('update', updated.data))
+            .catch(err => console.log(err))
+      }
+
       this.message.id = null;
       this.message.text = '';
     }

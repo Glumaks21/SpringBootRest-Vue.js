@@ -17,7 +17,7 @@
 
       <v-main v-if="profile">
         <v-container>
-          <message-form :selectedMessage="selectedMessage" @save="saveMessage"/>
+          <message-form :selectedMessage="selectedMessage" @save="saveMessage" @update="saveMessage"/>
           <message-list :messages="messages" @edit="editMessage" @delete="deleteMessage"/>
         </v-container>
       </v-main>
@@ -31,24 +31,24 @@ import MessageForm from "./components/MessageForm.vue"
 import MessageList from "./components/MessageList.vue"
 import axios from "axios"
 import {addHandler} from "./util/ws"
+import messagesApi from "./api/messages";
 
 export default {
-  components: {MessageList, MessageForm},
-  data() {
-    return {
-      selectedMessage: null,
-      messages: frontendData.messages,
-      profile: frontendData.profile
-    }
-  },
   methods: {
     fetchMessages() {
       axios.get("/messages")
           .then(response => this.messages = [...response.data])
           .catch(err => console.log(err))
     },
-    async saveMessage(message) {
-
+    saveMessage(saved) {
+      console.log(saved)
+      let index = this.messages
+          .indexOf(message => message.id === saved.id)
+      if (index > -1) {
+        this.messages.splice(index, 1, saved)
+      } else {
+        this.messages.push(saved)
+      }
     },
     editMessage(message) {
       this.selectedMessage = {
@@ -57,31 +57,45 @@ export default {
       }
     },
     async deleteMessage(message) {
-      const isDeleted = await axios.delete('/messages/' + message.id)
-          .then(response => response.status === 200)
+      messagesApi.remove(message.id)
+          .then(response => {
+            if (response.status === 200) {
+              this.messages.splice(this.messages.indexOf(message), 1)
+            }
+          })
           .catch(err => console.log(err))
-
-      if (isDeleted) {
-        this.messages.splice(this.messages.indexOf(message), 1)
-      }
+    }
+  },
+  components: {MessageList, MessageForm},
+  data() {
+    return {
+      selectedMessage: null,
+      messages: frontendData.messages,
+      profile: frontendData.profile
     }
   },
   created() {
-    addHandler(message => {
-      let index = -1
-      if (message.id !== null) {
-        for (let i = 0; i < this.messages.length; i++) {
-          if (this.messages[i].id === message.id) {
-            index = i
-            break
-          }
-        }
-      }
+    addHandler(data => {
+      if (data.objectType === 'MESSAGE') {
+        const index = this.messages.findIndex(message => message.id === data.body.id)
 
-      if (index !== -1) {
-        this.messages.splice(index, 1, message)
+        switch (data.eventType) {
+          case "CREATE":
+          case "UPDATE":
+            if (index > -1) {
+              this.messages.splice(index, 1, data.body)
+            } else {
+              this.messages.push(data.body)
+            }
+            break
+          case "REMOVE":
+              this.messages.splice(index, 1)
+            break
+          default:
+            console.log(`Looks like the event type is unknown ${data.eventType}`)
+        }
       } else {
-        this.messages.push(message)
+        console.log(`Looks like the object type is unknown ${data.objectType}`)
       }
     })
   }
