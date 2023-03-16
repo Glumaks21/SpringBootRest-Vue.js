@@ -1,10 +1,16 @@
 <template>
-  <div>
-    <form @submit.prevent>
-      <input type="text" v-model="message.text" placeholder="Write something..."/>
-      <input type="submit" @click="save" value="Save"/>
-    </form>
-  </div>
+  <v-form @submit.prevent>
+    <v-container>
+      <v-row>
+        <v-col sm="10">
+          <v-text-field v-model="message.text" placeholder="Write something..." label="New message"/>
+        </v-col>
+        <v-col sm="2">
+          <v-btn size="large" @click="save">Send</v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-form>
 </template>
 
 <script>

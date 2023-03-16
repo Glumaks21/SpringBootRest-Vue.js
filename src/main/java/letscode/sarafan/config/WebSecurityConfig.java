@@ -2,6 +2,7 @@ package letscode.sarafan.config;
 
 import letscode.sarafan.domain.User;
 import letscode.sarafan.repo.UserDetailsRepo;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,11 +10,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Configuration
 @EnableWebSecurity
@@ -35,30 +43,6 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                         .logoutSuccessUrl("/").permitAll()
                 )
                 .build();
-    }
-
-    @Bean
-    public PrincipalExtractor principalExtractor(UserDetailsRepo userDetailsRepo) {
-            return map -> {
-            String id = (String) map.get("sub");
-
-            User user = userDetailsRepo.findById(id).orElseGet(() -> {
-                User newUser = new User();
-
-                newUser.setId(id);
-                newUser.setName((String) map.get("name"));
-                newUser.setEmail((String) map.get("email"));
-                newUser.setGender((String) map.get("gender"));
-                newUser.setLocale((String) map.get("locale"));
-                newUser.setUserpic((String) map.get("picture"));
-
-                return newUser;
-            });
-
-            user.setLastVisit(LocalDateTime.now());
-
-            return userDetailsRepo.save(user);
-        };
     }
 
 }

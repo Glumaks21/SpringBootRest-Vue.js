@@ -1,9 +1,16 @@
 <template>
-  <div>
+  <v-card variant="outlined">
+    <v-card-title>
       <i>({{ message.id }})</i>{{ message.text }}
-      <button @click="$emit('edit', message)">edit</button>
-      <button @click="$emit('delete', message)">delete</button>
-  </div>
+    </v-card-title>
+    <v-card-actions>
+      <v-btn variant="outlined" @click="$emit('edit', message)">edit</v-btn>
+      <v-spacer></v-spacer>
+      <v-btn @click="$emit('delete', message)">
+        <v-icon icon="mdi-delete"></v-icon>
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>

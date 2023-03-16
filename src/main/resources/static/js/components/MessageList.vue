@@ -1,9 +1,11 @@
 <template>
-  <div class="container">
-    <message-row v-for="message in messages" :key="message.id" :message="message"
+  <v-list lines="two">
+    <v-list-item v-for="message in sortedMessages" :key="message.id">
+    <message-row :message="message"
                  @edit="$emit('edit', message)"
                  @delete="$emit('delete', message)"/>
-  </div>
+    </v-list-item>
+  </v-list>
 </template>
 
 <script>
@@ -16,6 +18,11 @@ export default {
     messages: {
       type: Array,
       required: true
+    }
+  },
+  computed: {
+    sortedMessages() {
+      return this.messages.sort((a, b) => -(a.id - b.id))
     }
   }
 }

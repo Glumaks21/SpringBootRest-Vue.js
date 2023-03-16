@@ -1,5 +1,6 @@
-const path = require('path');
+const path = require('path')
 const { VueLoaderPlugin } = require('vue-loader')
+const { VuetifyPlugin } = require('webpack-plugin-vuetify')
 
 module.exports = {
     mode: 'development',
@@ -9,9 +10,11 @@ module.exports = {
         static: './dist',
         compress: true,
         port: 8000,
-        allowedHosts: [
-            'localhost:9000'
-        ],
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+            "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
+        }
     },
     module: {
         rules: [
@@ -28,11 +31,19 @@ module.exports = {
             {
                 test: /\.vue$/,
                 loader: 'vue-loader'
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    'vue-style-loader',
+                    'css-loader'
+                ]
             }
         ]
     },
     plugins: [
-        new VueLoaderPlugin()
+        new VueLoaderPlugin(),
+        new VuetifyPlugin({autoImport: true})
     ],
     resolve: {
         modules: [
