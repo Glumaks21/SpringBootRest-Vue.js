@@ -6,7 +6,7 @@
           <v-text-field v-model="message.text" placeholder="Write something..." label="New message"/>
         </v-col>
         <v-col sm="2">
-          <v-btn size="large" @click="save">Send</v-btn>
+          <v-btn size="large" @click="saveOrUpdate">Send</v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -14,16 +14,14 @@
 </template>
 
 <script>
-
-import messagesApi from "../api/messages";
+import { mapActions} from "vuex"
 
 export default {
   name: "message-form",
   props: {
-    selectedMessage: {
+    editMessage: {
       type: [null, Object],
-      required: false,
-      default: null
+      required: false
     }
   },
   data() {
@@ -34,27 +32,30 @@ export default {
       }
     }
   },
-  watch: {
-    selectedMessage(selectedMessage) {
-      if (selectedMessage !== null) {
-        this.message = selectedMessage;
-      }
-    }
-  },
   methods: {
-    save() {
-      if (this.message.id === null) {
-        messagesApi.add(this.message)
-            .then(saved => this.$emit('add', saved.data))
-            .catch(err => console.log(err))
+    ...mapActions({
+      save: 'message/saveMessage',
+      update: 'message/updateMessage'
+    }),
+    saveOrUpdate() {
+      if (this.editMessage !== null) {
+        this.update(this.message)
       } else {
-        messagesApi.update(this.message)
-            .then(updated => this.$emit('update', updated.data))
-            .catch(err => console.log(err))
+        this.save(this.message)
       }
 
-      this.message.id = null;
-      this.message.text = '';
+      this.$emit("save")
+    }
+  },
+  watch: {
+    editMessage(newEditMessage) {
+      if (newEditMessage !== null) {
+        this.message.id = newEditMessage.id
+        this.message.text = newEditMessage.text
+      } else {
+        this.message.id = null
+        this.message.text = ''
+      }
     }
   }
 }

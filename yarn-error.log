@@ -30,7 +30,7 @@ npm manifest:
   {
     "name": "Sarafan",
     "version": "1.0.0",
-    "main": "index.js",
+    "main": "vuetify.js",
     "repository": "https://github.com/Glumaks21/SpringBootRest-Vue.js.git",
     "author": "Glumaks21 <glumaks21@gmail.com>",
     "license": "MIT",
